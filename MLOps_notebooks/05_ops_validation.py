@@ -23,6 +23,7 @@ client = MlflowClient()
 fs = FeatureStoreClient()
 
 # After receiving payload from webhooks, use MLflow client to retrieve model details and lineage
+# Add for test
 try:
   registry_event = json.loads(dbutils.widgets.get('event_message'))
   model_name = registry_event['model_name']
