@@ -75,7 +75,7 @@ jobs:
       - name: Check if staging Repo already exists
         id: check-repo-stg
         run: databricks repos get --path /Repos/MLOps_Staging/MLOps_E2E
-        continue-on-error: true # the above command will error out if repo does not exist, continue if that's the case
+        continue-on-error: true # TEST the above command will error out if repo does not exist, continue if that's the case
 
       - name: Create staging Repos
         if: steps.check-repo-stg.outcome == 'failure' # create repo if repo does not exist
