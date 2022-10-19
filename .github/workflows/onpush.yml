@@ -6,13 +6,13 @@ name: MLOps Github Actions
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ main, cici/test ]
     tags-ignore: # if we only adding tags, we don't need to run tests
       - '*.*'
     paths-ignore:
       - 'README.md' # if we change documentation only, we don't need to run tests
   pull_request:
-    branches: [ main ]
+    branches: [ main, cici/test ]
     tags-ignore:
       - '*.*' # if we only adding tags, we don't need to run tests
     paths-ignore:
@@ -33,8 +33,8 @@ jobs:
         python-version: [3.8]
 
     env:
-      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_STG }}
-      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STG }}
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -71,11 +71,12 @@ jobs:
         id: get-env-var
         run: |
           env
+          databricks workspace ls /Users/cici.xue@databricks.com
 
       - name: Check if staging Repo already exists
         id: check-repo-stg
         run: databricks repos get --path /Repos/MLOps_Staging/MLOps_E2E
-        continue-on-error: true # the above command will error out if repo does not exist, continue if that's the case
+        continue-on-error: true # test the above command will error out if repo does not exist, continue if that's the case
 
       - name: Create staging Repos
         if: steps.check-repo-stg.outcome == 'failure' # create repo if repo does not exist
@@ -86,7 +87,7 @@ jobs:
           databricks repos create --url=${{env.repo_url}} --provider=gitHub --path=/Repos/MLOps_Staging/MLOps_E2E 
 
       - name: Update staging Repos
-        run: databricks repos update --path=/Repos/MLOps_Staging/MLOps_E2E --branch=${{ env.GITHUB_REF_SLUG }}
+        run: databricks repos update --path=/Repos/MLOps_Staging/MLOps_E2E --branch=${{ env.GITHUB_REF_NAME }}
 
       # run test in staging env
       - uses: ./.github/databricks-actions/run-notebook
@@ -97,7 +98,7 @@ jobs:
           token: ${{ env.DATABRICKS_TOKEN }}
           num-workers: 3
           runtime-version: "10.3.x-cpu-ml-scala2.12"
-          node-type: "Standard_L4s"
+          node-type: "r4.xlarge"
   
      # the following steps deploy the repo to prodution
       - name: Check if production Repo already exists
@@ -114,7 +115,7 @@ jobs:
           databricks repos create --url=${{env.repo_url}} --provider=gitHub --path=/Repos/MLOps_Production/MLOps_E2E 
 
       - name: Update production Repos
-        run: databricks repos update --path=/Repos/MLOps_Production/MLOps_E2E --branch=${{ env.GITHUB_REF_SLUG }}
+        run: databricks repos update --path=/Repos/MLOps_Production/MLOps_E2E --branch=${{ env.GITHUB_REF_NAME }}
      
       #dbx deploy --files-only --no-rebuild --deployment-file=conf/staging.json --no-package
       #dbx launch --job=nutter-testing-suite --as-run-submit --trace
