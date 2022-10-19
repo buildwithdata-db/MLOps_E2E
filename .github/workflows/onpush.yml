@@ -98,7 +98,7 @@ jobs:
           token: ${{ env.DATABRICKS_TOKEN }}
           num-workers: 3
           runtime-version: "10.3.x-cpu-ml-scala2.12"
-          node-type: "r4.xlarge"
+          node-type: "m4.large"
   
      # the following steps deploy the repo to prodution
       - name: Check if production Repo already exists
