@@ -86,7 +86,7 @@ jobs:
           databricks repos create --url=${{env.repo_url}} --provider=gitHub --path=/Repos/MLOps_Staging/MLOps_E2E 
 
       - name: Update staging Repos
-        run: databricks repos update --path=/Repos/MLOps_Staging/MLOps_E2E --branch=${{ env.GITHUB_REF_SLUG }}
+        run: databricks repos update --path=/Repos/MLOps_Staging/MLOps_E2E --branch=${{ env.GITHUB_REF_NAME }}
 
       # run test in staging env
       - uses: ./.github/databricks-actions/run-notebook
@@ -114,7 +114,7 @@ jobs:
           databricks repos create --url=${{env.repo_url}} --provider=gitHub --path=/Repos/MLOps_Production/MLOps_E2E 
 
       - name: Update production Repos
-        run: databricks repos update --path=/Repos/MLOps_Production/MLOps_E2E --branch=${{ env.GITHUB_REF_SLUG }}
+        run: databricks repos update --path=/Repos/MLOps_Production/MLOps_E2E --branch=${{ env.GITHUB_REF_NAME }}
      
       #dbx deploy --files-only --no-rebuild --deployment-file=conf/staging.json --no-package
       #dbx launch --job=nutter-testing-suite --as-run-submit --trace
