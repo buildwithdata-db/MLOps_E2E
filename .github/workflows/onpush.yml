@@ -71,6 +71,7 @@ jobs:
         id: get-env-var
         run: |
           env
+          databricks workspace ls /Users/cici.xue@databricks.com
 
       - name: Check if staging Repo already exists
         id: check-repo-stg
